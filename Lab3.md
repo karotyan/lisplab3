@@ -30,16 +30,14 @@
 ```lisp
 (defun swap-pass (lst)
   (cond
-   
-    ((null (rest lst))
+    ((or (null lst) (null (rest lst)))
      (values lst nil))
 
     ((> (first lst) (second lst))
-     (multiple-value-bind (rest-list flag) 
+     (multiple-value-bind (rest-list flag)
          (swap-pass (cons (first lst) (rest (rest lst))))
        (values (cons (second lst) rest-list) t)))
 
-  
     (t
      (multiple-value-bind (rest-list flag)
          (swap-pass (rest lst))
@@ -50,7 +48,7 @@
 (defun bubble (lst)
   (multiple-value-bind (new-list flag) (swap-pass lst)
     (if flag
-        (sort-rec new-list)
+        (bubble new-list)
         new-list)))
 ```
 ### Тестові набори та утиліти
@@ -84,18 +82,18 @@ NIL
 ## Лістинг функції з використанням деструктивного підходу
 ```lisp
 (defun badbubble (lst)
-  (let* ((n (length lst))
+  (let* ((a (copy-list lst))
+         (n (length a))
          (flag t))
 
     (loop while flag do
           (setf flag nil)
-
           (dotimes (i (1- n))
-            (when (> (nth i lst) (nth (1+ i) lst))
-              (rotatef (nth i lst) (nth (1+ i) lst))
-              (setf flag t)))))
+            (when (> (nth i a) (nth (1+ i) a))
+              (rotatef (nth i a) (nth (1+ i) a))
+              (setf flag t))))
 
-  lst)
+    a))
 ```
 ### Тестові набори та утиліти
 ```lisp
